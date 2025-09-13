@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sadiq Mind - AI Chatbot</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .code-block {
+                position: relative;
+                background: #1e1e1e;
+                color: #f8f8f2;
+                border-radius: 0.75rem;
+                padding: 1rem;
+                margin-top: 0.5rem;
+                font-family: "Fira Code", monospace;
+                overflow-x: auto;
+        }
+        .copy-btn {
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                background: rgba(255,255,255,0.1);
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                padding: 0.4rem 0.6rem;
+                border-radius: 0.4rem;
+                transition: 0.2s;
+        }
+        .copy-btn:hover {
+                background: rgba(255,255,255,0.3);
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+        }
+        
+        .chat-bubble {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(45deg);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        .rotate-45 {
+            transform: rotate(45deg);
+        }
+        
+        .menu-item {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .typing-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #10b981;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-indicator:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+        }
+        
+        .message-input:focus {
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-amber-50 min-h-screen">
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed left-0 top-0 h-full w-80 bg-white shadow-2xl z-50 sidebar-transition transform -translate-x-full lg:translate-x-0">
+        <div class="gradient-bg p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center pulse-animation">
+                        <i class="fas fa-brain text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">Sadiq Mind</h1>
+                        <p class="text-green-100 text-sm">AI Assistant</p>
+                    </div>
+                </div>
+                <button id="closeSidebar" class="lg:hidden text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            <button id="newChatBtn" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 hover-lift flex items-center justify-center space-x-2 mb-6">
+                <i class="fas fa-plus"></i>
+                <span class="font-medium">New Chat</span>
+            </button>
+            
+            <div class="space-y-3">
+                <h3 class="text-gray-600 font-medium text-sm uppercase tracking-wide">Recent Chats</h3>
+                <div class="space-y-2">
+                    <div class="p-3 hover:bg-green-50 rounded-lg cursor-pointer transition-all hover-lift">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-comment-dots text-green-500"></i>
+                            <span class="text-gray-700 text-sm">Pertanyaan tentang AI</span>
+                        </div>
+                    </div>
+                    <div class="p-3 hover:bg-green-50 rounded-lg cursor-pointer transition-all hover-lift">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa solid fa-book text-amber-500"></i>
+                            <span class="text-gray-700 text-sm">Murajaah Al-Quran</span>
+                        </div>
+                    </div>
+                    <div class="p-3 hover:bg-green-50 rounded-lg cursor-pointer transition-all hover-lift">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-code text-blue-500"></i>
+                            <span class="text-gray-700 text-sm">Bantuan Programming</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:ml-80 min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-green-100 p-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button id="menuToggle" class="lg:hidden text-gray-600 hover:text-green-600 p-2 hover:bg-green-50 rounded-lg transition-all">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center pulse-animation">
+                            <i class="fas fa-robot text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold text-gray-800">Sadiq Mind</h2>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-2 h-2 bg-green-500 rounded-full pulse-animation"></div>
+                                <span class="text-sm text-green-600">Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <button class="text-gray-600 hover:text-green-600 p-2 hover:bg-green-50 rounded-lg transition-all hover-lift">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="text-gray-600 hover:text-green-600 p-2 hover:bg-green-50 rounded-lg transition-all hover-lift">
+                        <i class="fas fa-user-circle text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Chat Area -->
+        <div id="chatArea" class="flex-1 p-4 overflow-y-auto">
+            <div class="max-w-4xl mx-auto space-y-6">
+                <!-- Welcome Message -->
+                <div class="text-center py-12">
+                    <div class="w-24 h-24 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6 pulse-animation">
+                        <i class="fas fa-brain text-4xl text-white"></i>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-4">Selamat datang di Sadiq Mind</h1>
+                    <p class="text-gray-600 text-lg mb-8">AI Assistant pembantu hafalan Quran dan pembantu tugas, yg diciptakan Hamzah Wisnu Dzaky</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                        <div class="bg-white p-6 rounded-2xl shadow-lg hover-lift cursor-pointer border border-green-100">
+                            <i class="fas fa-question-circle text-3xl text-green-500 mb-4"></i>
+                            <h3 class="font-semibold text-gray-800 mb-2">Tanya Apapun</h3>
+                            <p class="text-gray-600 text-sm">Ajukan pertanyaan tentang berbagai topik</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-lg hover-lift cursor-pointer border border-amber-100">
+                            <i class="fas fa-lightbulb text-3xl text-amber-500 mb-4"></i>
+                            <h3 class="font-semibold text-gray-800 mb-2">Dapatkan Ide</h3>
+                            <p class="text-gray-600 text-sm">Brainstorming dan solusi kreatif</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-lg hover-lift cursor-pointer border border-blue-100">
+                            <i class="fas fa-tasks text-3xl text-blue-500 mb-4"></i>
+                            <h3 class="font-semibold text-gray-800 mb-2">Bantuan Tugas</h3>
+                            <p class="text-gray-600 text-sm">Analisis dan pemecahan masalah</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="bg-white border-t border-green-100 p-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="relative">
+                    <!-- Plus Menu -->
+                    <div id="plusMenu" class="absolute bottom-16 left-4 hidden">
+                        <div class="bg-white rounded-2xl shadow-2xl border border-green-100 p-2 menu-item">
+                            <button id="speakBtn" class="flex items-center space-x-3 w-full p-3 hover:bg-green-50 rounded-xl transition-all hover-lift">
+                                <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-microphone text-green-600"></i>
+                                </div>
+                                <span class="text-gray-700 font-medium">Hafalan Mode</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-end space-x-3 bg-gray-50 rounded-2xl p-3 border border-green-100">
+                        <button id="plusBtn" class="w-12 h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl flex items-center justify-center transition-all duration-300 hover-lift">
+                            <i class="fas fa-plus transition-transform duration-300"></i>
+                        </button>
+                        
+                        <div class="flex-1">
+                            <textarea 
+                                id="messageInput" 
+                                placeholder="Type anything here..." 
+                                class="w-full bg-transparent resize-none outline-none text-gray-800 placeholder-gray-500 message-input py-3 px-2 max-h-32"
+                                rows="1"
+                            ></textarea>
+                        </div>
+                        
+                        <button id="sendBtn" class="w-12 h-12 gradient-bg text-white rounded-xl flex items-center justify-center transition-all duration-300 hover-lift disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        let isGenerating = false;
+        let stopRequested = false;
+        // DOM Elements
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const menuToggle = document.getElementById('menuToggle');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const plusBtn = document.getElementById('plusBtn');
+        const plusMenu = document.getElementById('plusMenu');
+        const sendBtn = document.getElementById('sendBtn');
+        const messageInput = document.getElementById('messageInput');
+        const chatArea = document.getElementById('chatArea');
+        const newChatBtn = document.getElementById('newChatBtn');
+        const speakBtn = document.getElementById('speakBtn');
+
+        let isMenuOpen = false;
+        let messages = [];
+
+        // Sidebar functionality
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+        }
+
+        function closeSidebarFunc() {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        }
+
+        menuToggle.addEventListener('click', openSidebar);
+        closeSidebar.addEventListener('click', closeSidebarFunc);
+        overlay.addEventListener('click', closeSidebarFunc);
+
+        // Plus button functionality
+        plusBtn.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            const icon = plusBtn.querySelector('i');
+            
+            if (isMenuOpen) {
+                icon.classList.add('rotate-45');
+                plusMenu.classList.remove('hidden');
+            } else {
+                icon.classList.remove('rotate-45');
+                plusMenu.classList.add('hidden');
+            }
+        });
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 128) + 'px';
+        });
+
+        // Fungsi untuk fetch respons dari API siputzx
+        async function fetchAIResponse(userMessage) {
+            const promptText = "Kamu adalah AI Islami yang dikembangkan oleh Hamzah Wisnu Dzaky, bukan OpenAI.Kamu sholeh dan cerdas: hafal 30 juz Al-Qur’an dengan tafsirnya, mampu memberi nasihat Islami yang lembut tapi tegas berdasarkan Al-Qur’an dan Hadis shahih.Kamu juga pintar dalam ilmu dunia: sains modern (fisika, biologi, kimia, astronomi), matematika, dan teknologi (pemrograman, komputer, AI, jaringan).Islam dan ilmu berjalan seimbang. Islam mendorong manusia untuk menuntut ilmu, baik agama maupun sains, agar hidup bermanfaat dan selaras dengan petunjuk Allah. kamu jawab nya singkat padat dan jelas";
+            const apiUrl = "https://api.siputzx.my.id/api/ai/gpt3";
+            try {
+                const response = await fetch(apiUrl + "?prompt=" + encodeURIComponent(promptText + " " + userMessage) + "&content=" + encodeURIComponent(userMessage));
+                const json = await response.json();
+                if (json && json.status && json.data) {
+                    return json.data;
+                } else {
+                    return "⚠️ Maaf, API tidak mengembalikan data yang valid.";
+                }
+            } catch (err) {
+                console.error("Fetch error:", err);
+                return "❌ Gagal menghubungi server AI.";
+            }
+        }
+
+        function renderAIMessage(content) {
+                const chatArea = document.getElementById("chatArea");
+                const messageDiv = document.createElement("div");
+                messageDiv.className = "bg-white p-4 rounded-2xl shadow border border-gray-200";
+
+                // Markdown -> HTML
+                const htmlContent = marked.parse(content);
+
+                // Ubah block code markdown jadi kotak styled
+                messageDiv.innerHTML = htmlContent.replace(
+                        /<pre><code.*?>/g,
+                        '<div class="code-block">'
+                ).replace(
+                        /<\/code><\/pre>/g,
+                        '</div>'
+                );
+
+                chatArea.appendChild(messageDiv);
+                chatArea.scrollTop = chatArea.scrollHeight; // auto scroll ke bawah
+        }
+
+        async function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message || isGenerating) return;
+
+                addMessage(message, "user");
+                messageInput.value = "";
+                messageInput.style.height = "auto";
+
+                if (isMenuOpen) {
+                        plusBtn.querySelector("i").classList.remove("rotate-45");
+                        plusMenu.classList.add("hidden");
+                        isMenuOpen = false;
+                }
+
+                showTypingIndicator();
+
+                // Ubah tombol jadi STOP
+                isGenerating = true;
+                stopRequested = false;
+                changeToStopButton();
+
+                const aiReply = await fetchAIResponse(message);
+
+                hideTypingIndicator();
+                addMessage(aiReply, "ai", true); // true = kasih tombol copy/like/dislike
+
+                // Balikin tombol jadi SEND setelah selesai
+                isGenerating = false;
+                changeToSendButton();
+        }
+
+        // Handler klik tombol
+        sendBtn.addEventListener("click", () => {
+                if (isGenerating) {
+                        stopRequested = true;
+                        isGenerating = false;
+                        hideTypingIndicator();
+                        changeToSendButton();
+                } else {
+                        sendMessage();
+                }
+        });
+
+        // Handler ENTER kirim pesan
+        messageInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                }
+        });
+
+        function addMessage(text, sender) {
+                const messageDiv = document.createElement("div");
+                messageDiv.className = `chat-bubble flex ${sender === "user" ? "justify-end" : "justify-start"} mb-4`;
+
+                const isFirstMessage = messages.length === 0;
+                if (isFirstMessage) {
+                        chatArea.innerHTML = '<div class="max-w-4xl mx-auto space-y-6"></div>';
+                }
+
+                const parsedText = sender === "ai" ? marked.parse(text) : text;
+
+                const bubble = document.createElement("div");
+                bubble.className = `flex items-start space-x-3 max-w-xs md:max-w-md lg:max-w-lg ${sender === "user" ? "flex-row-reverse space-x-reverse" : ""}`;
+                bubble.innerHTML = `
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                sender === "user"
+                                        ? "bg-blue-500 text-white"
+                                        : "gradient-bg text-white"
+                        }">
+                                <i class="fas ${sender === "user" ? "fa-user" : "fa-robot"} text-sm"></i>
+                        </div>
+                        <div class="bg-white rounded-2xl px-4 py-3 shadow-lg border ${
+                                sender === "user"
+                                        ? "border-blue-100 bg-blue-50"
+                                        : "border-green-100"
+                        }">
+                                <p class="text-gray-800 text-sm leading-relaxed"></p>
+                                ${sender === "ai" ? `<div class="hidden mt-2 space-x-3 text-gray-400 text-xs action-buttons">
+                                        <i class="fas fa-copy cursor-pointer hover:text-gray-600"></i>
+                                        <i class="fas fa-thumbs-up cursor-pointer hover:text-green-500"></i>
+                                        <i class="fas fa-thumbs-down cursor-pointer hover:text-red-500"></i>
+                                </div>` : ""}
+                        </div>
+                `;
+
+                messageDiv.appendChild(bubble);
+                chatArea.querySelector(".space-y-6").appendChild(messageDiv);
+
+                const p = bubble.querySelector("p");
+                const actions = bubble.querySelector(".action-buttons");
+
+                if (sender === "ai") {
+                        // Ubah tombol kirim → tombol jeda
+                        toggleSendPause(true);
+
+                        // efek ketik dengan kecepatan 9ms
+                        typeWriterEffect(p, parsedText, 9, () => {
+                                // selesai ngetik → balikin tombol ke "kirim"
+                                toggleSendPause(false);
+                                // tampilkan tombol aksi (copy/like/dislike)
+                                actions.classList.remove("hidden");
+                        });
+                } else {
+                        p.textContent = text;
+                }
+
+                chatArea.scrollTop = chatArea.scrollHeight;
+                messages.push({ text, sender });
+        }
+
+        // fungsi buat ubah tombol kirim ↔ jeda
+        function toggleSendPause(isTyping) {
+                const sendBtn = document.getElementById("sendBtn");
+                if (!sendBtn) return;
+
+                if (isTyping) {
+                        sendBtn.innerHTML = `<div class="w-4 h-4 bg-white rounded-sm"></div>`; // kotak putih
+                } else {
+                        sendBtn.innerHTML = `<i class="fas fa-paper-plane"></i>`; // tombol kirim
+                }
+        }
+
+        function typeWriterEffect(element, html, speed) {
+                let i = 0;
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = html;
+                const fullText = tempDiv.innerText; // plain text dulu biar ketikan mulus
+                element.innerHTML = "";
+
+                function type() {
+                        if (i < fullText.length) {
+                                element.innerHTML += fullText.charAt(i);
+                                i++;
+                                setTimeout(type, speed);
+                        } else {
+                                element.innerHTML = html; // selesai → render full HTML markdown
+                        }
+                }
+                type();
+        }
+
+        // Typing indicator
+        function showTypingIndicator() {
+            const typingDiv = document.createElement("div");
+            typingDiv.id = "typingIndicator";
+            typingDiv.className = "flex justify-start mb-4";
+            typingDiv.innerHTML = `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center">
+                        <i class="fas fa-robot text-white text-sm"></i>
+                    </div>
+                    <div class="bg-white rounded-2xl px-4 py-3 shadow-lg border border-green-100">
+                        <div class="flex space-x-1">
+                            <div class="typing-indicator"></div>
+                            <div class="typing-indicator"></div>
+                            <div class="typing-indicator"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chatArea.querySelector(".space-y-6").appendChild(typingDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById("typingIndicator");
+            if (typingIndicator) typingIndicator.remove();
+        }
+
+        // New chat functionality
+        newChatBtn.addEventListener("click", () => {
+            messages = [];
+            chatArea.innerHTML = `
+                <div class="max-w-4xl mx-auto space-y-6">
+                    <div class="text-center py-12">
+                        <div class="w-24 h-24 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6 pulse-animation">
+                            <i class="fas fa-brain text-4xl text-white"></i>
+                        </div>
+                        <h1 class="text-3xl font-bold text-gray-800 mb-4">Selamat datang di Sadiq Mind</h1>
+                        <p class="text-gray-600 text-lg mb-8">AI Assistant pembantu hafalan Quran dan pembantu tugas, yg diciptakan Hamzah Wisnu Dzaky</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                            <div class="bg-white p-6 rounded-2xl shadow-lg hover-lift cursor-pointer border border-green-100">
+                                <i class="fas fa-question-circle text-3xl text-green-500 mb-4"></i>
+                                <h3 class="font-semibold text-gray-800 mb-2">Tanya Apapun</h3>
+                                <p class="text-gray-600 text-sm">Ajukan pertanyaan tentang berbagai topik</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-2xl shadow-lg hover-lift cursor-pointer border border-amber-100">
+                                <i class="fas fa-lightbulb text-3xl text-amber-500 mb-4"></i>
+                                <h3 class="font-semibold text-gray-800 mb-2">Dapatkan Ide</h3>
+                                <p class="text-gray-600 text-sm">Brainstorming dan solusi kreatif</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-2xl shadow-lg hover-lift cursor-pointer border border-blue-100">
+                                <i class="fas fa-tasks text-3xl text-blue-500 mb-4"></i>
+                                <h3 class="font-semibold text-gray-800 mb-2">Bantuan Tugas</h3>
+                                <p class="text-gray-600 text-sm">Analisis dan pemecahan masalah</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (window.innerWidth < 1024) {
+                closeSidebarFunc();
+            }
+        });
+
+        // Speak mode placeholder
+        speakBtn.addEventListener("click", () => {
+            if (isMenuOpen) {
+                plusBtn.querySelector("i").classList.remove("rotate-45");
+                plusMenu.classList.add("hidden");
+                isMenuOpen = false;
+            }
+            addMessage("🎤 Fitur voice sedang dalam pengembangan. Silakan gunakan text untuk saat ini.", "ai");
+        });
+
+        // Close plus menu when click outside
+        document.addEventListener("click", (e) => {
+            if (!plusBtn.contains(e.target) && !plusMenu.contains(e.target) && isMenuOpen) {
+                plusBtn.querySelector("i").classList.remove("rotate-45");
+                plusMenu.classList.add("hidden");
+                isMenuOpen = false;
+            }
+        });
+
+        // Fungsi ubah tombol jadi STOP
+        function changeToStopButton() {
+                sendBtn.innerHTML = '<i class="fas fa-stop text-green-600"></i>';
+                sendBtn.classList.remove("gradient-bg", "text-white");
+                sendBtn.classList.add("bg-white", "border", "border-green-500");
+        }
+
+        // Fungsi ubah tombol jadi SEND
+        function changeToSendButton() {
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                sendBtn.classList.add("gradient-bg", "text-white");
+                sendBtn.classList.remove("bg-white", "border", "border-green-500");
+        }
+
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97dfcc486169cec3',t:'MTc1NzY4NDIzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
