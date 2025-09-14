@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/chatHistory", "destination": "/chatHistory.html" }
+  ]
+}
