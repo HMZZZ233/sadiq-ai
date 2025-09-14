@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat History</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+        }
+        
+        .chat-item {
+            animation: slideUp 0.3s ease-out;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15);
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        .search-focus:focus {
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+        
+        .favorite-star {
+            transition: all 0.3s ease;
+        }
+        
+        .favorite-star:hover {
+            transform: scale(1.2);
+        }
+        
+        .favorite-star.active {
+            color: #fbbf24;
+            animation: pulse 0.5s ease-out;
+        }
+        
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu-overlay {
+            backdrop-filter: blur(8px);
+        }
+        
+        .group-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+        
+        .chat-preview {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            color: white !important;
+            transform: scale(1.05);
+        }
+        
+        .search-highlight {
+            background: rgba(16, 185, 129, 0.2);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Mobile Menu Button -->
+    <div class="lg:hidden fixed top-4 left-4 z-50">
+        <button id="mobileMenuBtn" class="bg-white p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <i class="fas fa-bars text-gray-700"></i>
+        </button>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileOverlay" class="lg:hidden fixed inset-0 bg-black bg-opacity-50 mobile-menu-overlay z-40 hidden"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed left-0 top-0 h-full w-80 bg-white shadow-2xl z-50 sidebar-transition transform -translate-x-full lg:translate-x-0">
+        <div class="gradient-bg p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center pulse-animation">
+                        <i class="fas fa-brain text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">Sadiq Mind</h1>
+                        <p class="text-green-100 text-sm">AI Assistant</p>
+                    </div>
+                </div>
+                <button id="closeSidebar" class="lg:hidden text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            <button id="newChatBtn" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 hover-lift flex items-center justify-center space-x-2 mb-6">
+                <i class="fas fa-plus"></i>
+                <span class="font-medium">New Chat</span>
+            </button>
+
+            <!-- Search Bar -->
+            <div class="relative mb-6">
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Search conversations..." 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-12 pr-4 py-3 text-gray-700 placeholder-gray-500 search-focus focus:outline-none focus:border-green-500 focus:bg-white transition-all"
+                >
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button class="filter-btn active px-4 py-2 rounded-lg bg-green-100 text-green-700 text-sm font-medium" data-filter="all">
+                    <i class="fas fa-list mr-2"></i>All
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200" data-filter="favorites">
+                    <i class="fas fa-star mr-2"></i>Favorites
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200" data-filter="recent">
+                    <i class="fas fa-clock mr-2"></i>Recent
+                </button>
+            </div>
+
+            <!-- Recent Chats Section -->
+            <div class="space-y-3 mb-6">
+                <h3 class="text-gray-600 font-medium text-sm uppercase tracking-wide">Recent Chats</h3>
+                <div class="space-y-2">
+                    <div class="p-3 hover:bg-green-50 rounded-lg cursor-pointer transition-all hover-lift">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-comment-dots text-green-500"></i>
+                            <span class="text-gray-700 text-sm">Pertanyaan tentang AI</span>
+                        </div>
+                    </div>
+                    <div class="p-3 hover:bg-green-50 rounded-lg cursor-pointer transition-all hover-lift">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-code text-blue-500"></i>
+                            <span class="text-gray-700 text-sm">JavaScript Help</span>
+                        </div>
+                    </div>
+                    <div class="p-3 hover:bg-green-50 rounded-lg cursor-pointer transition-all hover-lift">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-palette text-purple-500"></i>
+                            <span class="text-gray-700 text-sm">UI Design Tips</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 rounded-xl p-4 text-center">
+                    <i class="fas fa-comment-dots text-2xl mb-2 text-green-500"></i>
+                    <div class="text-2xl font-bold text-gray-800" id="totalChats">24</div>
+                    <div class="text-sm text-gray-600">Total Chats</div>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-4 text-center">
+                    <i class="fas fa-star text-2xl mb-2 text-yellow-500"></i>
+                    <div class="text-2xl font-bold text-gray-800" id="favoriteCount">5</div>
+                    <div class="text-sm text-gray-600">Favorites</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:ml-80 min-h-screen">
+        <!-- Header -->
+        <div class="bg-white shadow-sm border-b border-gray-200 p-6 lg:p-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Your Conversations</h2>
+                    <p class="text-gray-600">Manage and search through your chat history</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-medium transition-all hover:shadow-lg">
+                        <i class="fas fa-plus mr-2"></i>New Chat
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat History Content -->
+        <div class="p-6 lg:p-8">
+            <div id="chatContainer" class="space-y-6">
+
+                </div>
+            
+                
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16">
+                <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-600 mb-2">No conversations found</h3>
+                <p class="text-gray-500">Try adjusting your search or filter criteria</p>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Sidebar toggle
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("mobileOverlay");
+    const openBtn = document.getElementById("mobileMenuBtn");
+    const closeBtn = document.getElementById("closeSidebar");
+
+    if (openBtn) {
+        openBtn.addEventListener("click", () => {
+            sidebar.classList.remove("-translate-x-full"); // geser masuk
+            overlay.classList.remove("hidden"); // overlay muncul
+        });
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            sidebar.classList.add("-translate-x-full"); // geser keluar
+            overlay.classList.add("hidden"); // overlay hilang
+        });
+    }
+
+    if (overlay) {
+        overlay.addEventListener("click", () => {
+            sidebar.classList.add("-translate-x-full");
+            overlay.classList.add("hidden");
+        });
+    }
+
+    function generateId() {
+        return 'c_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8);
+    }
+
+    function getChats() {
+        const raw = JSON.parse(localStorage.getItem("chats") || "[]");
+        // ensure unique id and normalized fields
+        let mutated = false;
+        const normalized = raw.map(c => {
+            const out = Object.assign({}, c);
+            if (!out.id) { out.id = generateId(); mutated = true; }
+            if (!out.timestamp) { out.timestamp = new Date().toISOString(); mutated = true; }
+            if (typeof out.favorite === 'undefined') { out.favorite = 'false'; mutated = true; }
+            return out;
+        });
+        if (mutated) localStorage.setItem("chats", JSON.stringify(normalized));
+        return normalized;
+    }
+
+    function saveChats(chats) {
+        localStorage.setItem("chats", JSON.stringify(chats));
+    }
+
+    function groupChats(chats) {
+        // sort by timestamp desc
+        const sorted = chats.slice().sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+        const today = new Date();
+        const yesterday = new Date(); yesterday.setDate(today.getDate() - 1);
+        const groups = { today: [], yesterday: [], older: [] };
+
+        sorted.forEach(chat => {
+            const d = new Date(chat.timestamp);
+            if (isNaN(d.getTime())) {
+                groups.older.push(chat);
+            } else if (d.toDateString() === today.toDateString()) {
+                groups.today.push(chat);
+            } else if (d.toDateString() === yesterday.toDateString()) {
+                groups.yesterday.push(chat);
+            } else {
+                groups.older.push(chat);
+            }
+        });
+        return groups;
+    }
+
+    function isRecent(chat, days = 7) {
+        const d = new Date(chat.timestamp);
+        if (isNaN(d.getTime())) return false;
+        const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
+        return d >= cutoff;
+    }
+
+    function renderChats(list) {
+        const container = document.getElementById("chatContainer");
+        const emptyState = document.getElementById("emptyState");
+        container.innerHTML = "";
+
+        if (!list || !list.length) {
+            emptyState.style.display = "block";
+            updateStats(); // tetap update stats
+            return;
+        } else {
+            emptyState.style.display = "none";
+        }
+
+        const groups = groupChats(list);
+
+        function makeSection(title, chats) {
+            if (!chats.length) return;
+            const section = document.createElement("div");
+            section.innerHTML = `<h3 class="text-lg font-semibold text-gray-700 mb-3 group-header bg-gray-50 py-2 px-1">${title}</h3>`;
+            chats.forEach((chat, i) => {
+                const div = document.createElement("div");
+                div.className = "chat-item p-3 bg-white rounded shadow flex justify-between items-center fade-in";
+                div.dataset.favorite = chat.favorite || "false";
+                div.dataset.id = chat.id;
+                div.style.animationDelay = `${i * 0.08}s`;
+                div.innerHTML = `
+                    <div>
+                        <h4 class="font-medium">${chat.title}</h4>
+                        <p class="chat-preview text-gray-500 text-sm">${chat.preview || ""}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="favorite-star ${chat.favorite==="true" ? "fas fa-star active" : "far fa-star"} cursor-pointer" title="Favorite"></i>
+                        <div class="menu-dot relative">
+                            <i class="fas fa-ellipsis-h cursor-pointer" title="More"></i>
+                            <div class="absolute right-0 mt-1 bg-white border rounded shadow-lg hidden w-36 p-2 z-10">
+                                <div class="rename flex items-center justify-between cursor-pointer mb-2">
+                                    <span>Rename</span>
+                                    <i class="fas fa-pen"></i>
+                                </div>
+                                <div class="delete flex items-center justify-between cursor-pointer text-red-600 mb-2">
+                                    <span>Delete</span>
+                                    <i class="fas fa-trash"></i>
+                                </div>
+                                <div class="rename-input hidden flex items-center space-x-2">
+                                    <input type="text" class="border p-1 flex-1 rounded" value="${chat.title}">
+                                    <button class="save px-2 py-1 bg-green-500 text-white rounded">Save</button>
+                                    <button class="cancel px-2 py-1 bg-gray-300 text-gray-700 rounded">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                section.appendChild(div);
+            });
+            container.appendChild(section);
+        }
+
+        makeSection("Hari Ini", groups.today);
+        makeSection("Kemarin", groups.yesterday);
+        makeSection("Lebih Lama", groups.older);
+
+        updateStats();
+    }
+
+    function updateStats() {
+        const total = document.querySelectorAll(".chat-item").length;
+        const favs = document.querySelectorAll('.chat-item[data-favorite="true"]').length;
+        const totalEl = document.getElementById("totalChats");
+        const favEl = document.getElementById("favoriteCount");
+        if (totalEl) totalEl.textContent = total;
+        if (favEl) favEl.textContent = favs;
+    }
+
+    // event delegation for chat container
+    document.getElementById("chatContainer").addEventListener("click", e => {
+        let chats = getChats();
+
+        // menu-dot click: toggle only this menu and hide others
+        if (e.target.closest(".menu-dot i")) {
+            const menuDot = e.target.closest(".menu-dot");
+            const menu = menuDot.querySelector("div");
+            // hide other menus
+            document.querySelectorAll('.menu-dot > div').forEach(m => {
+                if (m !== menu) m.classList.add('hidden');
+            });
+            menu.classList.toggle("hidden");
+            return;
+        }
+
+        // rename click -> show input
+        if (e.target.closest(".rename")) {
+            const menuDot = e.target.closest(".menu-dot");
+            menuDot.querySelector(".rename").classList.add("hidden");
+            const ri = menuDot.querySelector(".rename-input");
+            ri.classList.remove("hidden");
+            const inp = ri.querySelector("input");
+            if (inp) inp.focus();
+            return;
+        }
+
+        // save rename
+        if (e.target.closest(".save")) {
+            const ri = e.target.closest(".rename-input");
+            const inp = ri.querySelector("input");
+            const newTitle = inp.value.trim();
+            if (!newTitle) return;
+            const item = e.target.closest(".chat-item");
+            const id = item.dataset.id;
+            item.querySelector("h4").textContent = newTitle;
+            const chat = chats.find(c => c.id === id);
+            if (chat) chat.title = newTitle;
+            saveChats(chats);
+            ri.classList.add("hidden");
+            item.querySelector(".rename").classList.remove("hidden");
+            return;
+        }
+
+        if (e.target.closest(".cancel")) {
+            const ri = e.target.closest(".rename-input");
+            const item = e.target.closest(".chat-item");
+            ri.classList.add("hidden");
+            item.querySelector(".rename").classList.remove("hidden");
+            return;
+        }
+
+        // delete click
+        if (e.target.closest(".delete")) {
+            const item = e.target.closest(".chat-item");
+            const id = item.dataset.id;
+            const chat = chats.find(c => c.id === id);
+            const ok = confirm(`Hapus percakapan "${chat ? chat.title : ''}"?`);
+            if (!ok) return;
+            chats = chats.filter(c => c.id !== id);
+            saveChats(chats);
+            renderChats(chats);
+            return;
+        }
+
+        // favorite toggle
+        if (e.target.closest(".favorite-star")) {
+            const star = e.target.closest(".favorite-star");
+            const item = star.closest(".chat-item");
+            const id = item.dataset.id;
+            const chat = chats.find(c => c.id === id);
+            if (!chat) return;
+            if (star.classList.contains("active")) {
+                star.className = "far fa-star favorite-star cursor-pointer";
+                item.dataset.favorite = "false";
+                chat.favorite = "false";
+            } else {
+                star.className = "fas fa-star favorite-star cursor-pointer active";
+                item.dataset.favorite = "true";
+                chat.favorite = "true";
+            }
+            saveChats(chats);
+            updateStats();
+            return;
+        }
+
+        // open chat (click on item but not on controls)
+        const item = e.target.closest(".chat-item");
+        if (item && !e.target.closest(".favorite-star") && !e.target.closest(".menu-dot")) {
+            item.classList.add("pulse-animation");
+            setTimeout(() => item.classList.remove("pulse-animation"), 500);
+            console.log("Open chat:", item.querySelector("h4").textContent);
+            // optionally: navigate back to chat UI or open chat viewer
+            return;
+        }
+    });
+
+    // close any open menu when clicking outside
+    document.addEventListener("click", e => {
+        if (!e.target.closest(".menu-dot")) {
+            document.querySelectorAll('.menu-dot > div').forEach(m => m.classList.add('hidden'));
+        }
+    });
+
+    document.getElementById("newChatBtn").addEventListener("click", () => {
+        window.location.href = "/";
+    });
+
+    // search
+    document.getElementById("searchInput").addEventListener("input", e => {
+        const term = e.target.value.toLowerCase();
+        const chats = getChats();
+        const filtered = chats.filter(c =>
+            (c.title || "").toLowerCase().includes(term) ||
+            ((c.preview || "").toLowerCase().includes(term))
+        );
+        renderChats(filtered);
+    });
+
+    // filters (all / favorites / recent)
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            const chats = getChats();
+            let filtered = chats;
+            if (btn.dataset.filter === "favorites") filtered = chats.filter(c => c.favorite === "true");
+            if (btn.dataset.filter === "recent") filtered = chats.filter(c => isRecent(c, 7));
+            renderChats(filtered);
+        });
+    });
+
+    // initial render
+    document.addEventListener("DOMContentLoaded", () => {
+        renderChats(getChats());
+    });
+</script>
