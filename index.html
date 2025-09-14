@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
@@ -139,7 +140,6 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-green-50 to-amber-50 min-h-screen">
-    <!-- Sidebar -->
     <div id="sidebar" class="fixed left-0 top-0 h-full w-80 bg-white shadow-2xl z-50 sidebar-transition transform -translate-x-full lg:translate-x-0">
         <div class="gradient-bg p-6 text-white">
             <div class="flex items-center justify-between">
@@ -165,24 +165,12 @@
             </button>
             
             <div class="space-y-3">
-                <h3 class="text-gray-600 font-medium text-sm uppercase tracking-wide">Recent Chats</h3>
+                <h3 class="text-gray-600 font-medium text-sm uppercase tracking-wide">Menu</h3>
                 <div class="space-y-2">
-                    <div class="p-3 hover:bg-green-50 rounded-lg cursor-pointer transition-all hover-lift">
+                    <div id="chatHistoryBtn" class="p-3 hover:bg-green-50 rounded-lg cursor-pointer transition-all hover-lift">
                         <div class="flex items-center space-x-3">
                             <i class="fas fa-comment-dots text-green-500"></i>
-                            <span class="text-gray-700 text-sm">Pertanyaan tentang AI</span>
-                        </div>
-                    </div>
-                    <div class="p-3 hover:bg-green-50 rounded-lg cursor-pointer transition-all hover-lift">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa solid fa-book text-amber-500"></i>
-                            <span class="text-gray-700 text-sm">Murajaah Al-Quran</span>
-                        </div>
-                    </div>
-                    <div class="p-3 hover:bg-green-50 rounded-lg cursor-pointer transition-all hover-lift">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-code text-blue-500"></i>
-                            <span class="text-gray-700 text-sm">Bantuan Programming</span>
+                            <span class="text-gray-700 text-sm">Chat History</span>
                         </div>
                     </div>
                 </div>
@@ -190,9 +178,7 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="lg:ml-80 min-h-screen flex flex-col">
-        <!-- Header -->
         <header class="bg-white shadow-sm border-b border-green-100 p-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
@@ -224,10 +210,8 @@
             </div>
         </header>
 
-        <!-- Chat Area -->
         <div id="chatArea" class="flex-1 p-4 overflow-y-auto">
             <div class="max-w-4xl mx-auto space-y-6">
-                <!-- Welcome Message -->
                 <div class="text-center py-12">
                     <div class="w-24 h-24 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6 pulse-animation">
                         <i class="fas fa-brain text-4xl text-white"></i>
@@ -299,9 +283,12 @@
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
+
+        // Varibleeeee
         let isGenerating = false;
         let stopRequested = false;
-        // DOM Elements
+
+        // elemen DOMM
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         const menuToggle = document.getElementById('menuToggle');
@@ -313,11 +300,12 @@
         const chatArea = document.getElementById('chatArea');
         const newChatBtn = document.getElementById('newChatBtn');
         const speakBtn = document.getElementById('speakBtn');
+        const chatHistoryBtn = document.getElementById('chatHistoryBtn');
 
         let isMenuOpen = false;
         let messages = [];
 
-        // Sidebar functionality
+        // func sidebar
         function openSidebar() {
             sidebar.classList.remove('-translate-x-full');
             overlay.classList.remove('hidden');
@@ -332,7 +320,7 @@
         closeSidebar.addEventListener('click', closeSidebarFunc);
         overlay.addEventListener('click', closeSidebarFunc);
 
-        // Plus button functionality
+        // event listener +
         plusBtn.addEventListener('click', () => {
             isMenuOpen = !isMenuOpen;
             const icon = plusBtn.querySelector('i');
@@ -345,16 +333,12 @@
                 plusMenu.classList.add('hidden');
             }
         });
-
-        // Auto-resize textarea
         messageInput.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 128) + 'px';
         });
-
-        // Fungsi untuk fetch respons dari API siputzx
         async function fetchAIResponse(userMessage) {
-            const promptText = "Kamu adalah AI Islami yang dikembangkan oleh Hamzah Wisnu Dzaky, bukan OpenAI.Kamu sholeh dan cerdas: hafal 30 juz Al-Qur’an dengan tafsirnya, mampu memberi nasihat Islami yang lembut tapi tegas berdasarkan Al-Qur’an dan Hadis shahih.Kamu juga pintar dalam ilmu dunia: sains modern (fisika, biologi, kimia, astronomi), matematika, dan teknologi (pemrograman, komputer, AI, jaringan).Islam dan ilmu berjalan seimbang. Islam mendorong manusia untuk menuntut ilmu, baik agama maupun sains, agar hidup bermanfaat dan selaras dengan petunjuk Allah. kamu jawab nya singkat padat dan jelas";
+            const promptText = "Kamu adalah AI Islami bernama Sadiq AI yang dikembangkan oleh Hamzah Wisnu Dzaky, bukan OpenAI.Kamu sholeh dan cerdas: hafal 30 juz Al-Qur’an dengan tafsirnya, mampu memberi nasihat Islami yang lembut tapi tegas berdasarkan Al-Qur’an dan Hadis shahih.Kamu juga pintar dalam ilmu dunia: sains modern (fisika, biologi, kimia, astronomi), matematika, dan teknologi (pemrograman, komputer, AI, jaringan).Islam dan ilmu berjalan seimbang. Islam mendorong manusia untuk menuntut ilmu, baik agama maupun sains, agar hidup bermanfaat dan selaras dengan petunjuk Allah. kamu jawab nya singkat padat dan jelas";
             const apiUrl = "https://api.siputzx.my.id/api/ai/gpt3";
             try {
                 const response = await fetch(apiUrl + "?prompt=" + encodeURIComponent(promptText + " " + userMessage) + "&content=" + encodeURIComponent(userMessage));
@@ -369,60 +353,55 @@
                 return "❌ Gagal menghubungi server AI.";
             }
         }
-
         function renderAIMessage(content) {
                 const chatArea = document.getElementById("chatArea");
                 const messageDiv = document.createElement("div");
                 messageDiv.className = "bg-white p-4 rounded-2xl shadow border border-gray-200";
-
-                // Markdown -> HTML
                 const htmlContent = marked.parse(content);
-
-                // Ubah block code markdown jadi kotak styled
-                messageDiv.innerHTML = htmlContent.replace(
-                        /<pre><code.*?>/g,
-                        '<div class="code-block">'
-                ).replace(
-                        /<\/code><\/pre>/g,
-                        '</div>'
-                );
-
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = htmlContent;
+                tempDiv.querySelectorAll("pre > code").forEach(codeEl => {
+                        const pre = codeEl.parentElement;
+                        pre.classList.add("code-block");
+                        const copyBtn = document.createElement("button");
+                        copyBtn.className = "copy-btn";
+                        copyBtn.innerText = "Copy";
+                        copyBtn.addEventListener("click", () => {
+                                navigator.clipboard.writeText(codeEl.innerText.trim());
+                                copyBtn.innerText = "Copied!";
+                                setTimeout(() => copyBtn.innerText = "Copy", 1500);
+                        });
+                        pre.style.position = "relative";
+                        pre.appendChild(copyBtn);
+                });
+                messageDiv.appendChild(tempDiv);
                 chatArea.appendChild(messageDiv);
-                chatArea.scrollTop = chatArea.scrollHeight; // auto scroll ke bawah
+                chatArea.scrollTop = chatArea.scrollHeight;
+                messageDiv.querySelectorAll("pre code").forEach(block => {
+                        hljs.highlightElement(block);
+                });
         }
-
         async function sendMessage() {
                 const message = messageInput.value.trim();
                 if (!message || isGenerating) return;
-
                 addMessage(message, "user");
                 messageInput.value = "";
                 messageInput.style.height = "auto";
-
                 if (isMenuOpen) {
                         plusBtn.querySelector("i").classList.remove("rotate-45");
                         plusMenu.classList.add("hidden");
                         isMenuOpen = false;
                 }
-
                 showTypingIndicator();
-
-                // Ubah tombol jadi STOP
                 isGenerating = true;
                 stopRequested = false;
                 changeToStopButton();
-
                 const aiReply = await fetchAIResponse(message);
-
                 hideTypingIndicator();
-                addMessage(aiReply, "ai", true); // true = kasih tombol copy/like/dislike
-
-                // Balikin tombol jadi SEND setelah selesai
+                addMessage(aiReply, "ai", true); 
                 isGenerating = false;
                 changeToSendButton();
         }
-
-        // Handler klik tombol
         sendBtn.addEventListener("click", () => {
                 if (isGenerating) {
                         stopRequested = true;
@@ -433,26 +412,20 @@
                         sendMessage();
                 }
         });
-
-        // Handler ENTER kirim pesan
         messageInput.addEventListener("keydown", (e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
                         sendMessage();
                 }
         });
-
         function addMessage(text, sender) {
                 const messageDiv = document.createElement("div");
                 messageDiv.className = `chat-bubble flex ${sender === "user" ? "justify-end" : "justify-start"} mb-4`;
-
                 const isFirstMessage = messages.length === 0;
                 if (isFirstMessage) {
                         chatArea.innerHTML = '<div class="max-w-4xl mx-auto space-y-6"></div>';
                 }
-
                 const parsedText = sender === "ai" ? marked.parse(text) : text;
-
                 const bubble = document.createElement("div");
                 bubble.className = `flex items-start space-x-3 max-w-xs md:max-w-md lg:max-w-lg ${sender === "user" ? "flex-row-reverse space-x-reverse" : ""}`;
                 bubble.innerHTML = `
@@ -476,33 +449,38 @@
                                 </div>` : ""}
                         </div>
                 `;
-
                 messageDiv.appendChild(bubble);
                 chatArea.querySelector(".space-y-6").appendChild(messageDiv);
-
                 const p = bubble.querySelector("p");
                 const actions = bubble.querySelector(".action-buttons");
-
                 if (sender === "ai") {
-                        // Ubah tombol kirim → tombol jeda
                         toggleSendPause(true);
-
-                        // efek ketik dengan kecepatan 9ms
                         typeWriterEffect(p, parsedText, 9, () => {
-                                // selesai ngetik → balikin tombol ke "kirim"
                                 toggleSendPause(false);
-                                // tampilkan tombol aksi (copy/like/dislike)
                                 actions.classList.remove("hidden");
+                                if (window.MathJax) {
+                                    MathJax.typesetPromise([bubble]);
+                                }
                         });
                 } else {
                         p.textContent = text;
+                        saveChatToHistory(text);
                 }
-
                 chatArea.scrollTop = chatArea.scrollHeight;
                 messages.push({ text, sender });
         }
-
-        // fungsi buat ubah tombol kirim ↔ jeda
+        function saveChatToHistory(preview, favorite = 'false') {
+                const chats = JSON.parse(localStorage.getItem('chats') || '[]');
+                const newId = chats.length + 1;
+                const title = "Chat History " + newId;
+                chats.push({
+                        title: title,
+                        preview: preview,
+                        favorite: favorite,
+                        timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('chats', JSON.stringify(chats));
+        }
         function toggleSendPause(isTyping) {
                 const sendBtn = document.getElementById("sendBtn");
                 if (!sendBtn) return;
@@ -513,27 +491,26 @@
                         sendBtn.innerHTML = `<i class="fas fa-paper-plane"></i>`; // tombol kirim
                 }
         }
-
         function typeWriterEffect(element, html, speed) {
                 let i = 0;
                 const tempDiv = document.createElement("div");
                 tempDiv.innerHTML = html;
-                const fullText = tempDiv.innerText; // plain text dulu biar ketikan mulus
+                const fullText = tempDiv.innerText; 
                 element.innerHTML = "";
-
                 function type() {
                         if (i < fullText.length) {
                                 element.innerHTML += fullText.charAt(i);
                                 i++;
                                 setTimeout(type, speed);
                         } else {
-                                element.innerHTML = html; // selesai → render full HTML markdown
+                                element.innerHTML = html;
+                                if (window.MathJax) {
+                                    MathJax.typesetPromise([element]);
+                                }
                         }
                 }
                 type();
         }
-
-        // Typing indicator
         function showTypingIndicator() {
             const typingDiv = document.createElement("div");
             typingDiv.id = "typingIndicator";
@@ -555,13 +532,10 @@
             chatArea.querySelector(".space-y-6").appendChild(typingDiv);
             chatArea.scrollTop = chatArea.scrollHeight;
         }
-
         function hideTypingIndicator() {
             const typingIndicator = document.getElementById("typingIndicator");
             if (typingIndicator) typingIndicator.remove();
         }
-
-        // New chat functionality
         newChatBtn.addEventListener("click", () => {
             messages = [];
             chatArea.innerHTML = `
@@ -593,13 +567,10 @@
                     </div>
                 </div>
             `;
-
             if (window.innerWidth < 1024) {
                 closeSidebarFunc();
             }
         });
-
-        // Speak mode placeholder
         speakBtn.addEventListener("click", () => {
             if (isMenuOpen) {
                 plusBtn.querySelector("i").classList.remove("rotate-45");
@@ -608,8 +579,6 @@
             }
             addMessage("🎤 Fitur voice sedang dalam pengembangan. Silakan gunakan text untuk saat ini.", "ai");
         });
-
-        // Close plus menu when click outside
         document.addEventListener("click", (e) => {
             if (!plusBtn.contains(e.target) && !plusMenu.contains(e.target) && isMenuOpen) {
                 plusBtn.querySelector("i").classList.remove("rotate-45");
@@ -617,19 +586,20 @@
                 isMenuOpen = false;
             }
         });
-
-        // Fungsi ubah tombol jadi STOP
         function changeToStopButton() {
                 sendBtn.innerHTML = '<i class="fas fa-stop text-green-600"></i>';
                 sendBtn.classList.remove("gradient-bg", "text-white");
                 sendBtn.classList.add("bg-white", "border", "border-green-500");
         }
-
-        // Fungsi ubah tombol jadi SEND
         function changeToSendButton() {
                 sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
                 sendBtn.classList.add("gradient-bg", "text-white");
                 sendBtn.classList.remove("bg-white", "border", "border-green-500");
+        }
+        if (chatHistoryBtn) {
+            chatHistoryBtn.addEventListener('click', () => {
+                window.location.href = '/chatHistory';
+            });
         }
 
     </script>
