@@ -173,6 +173,12 @@
                             <span class="text-gray-700 text-sm">Chat History</span>
                         </div>
                     </div>
+                    <div id="aboutDevBtn" class="p-3 hover:bg-green-50 rounded-lg cursor-pointer transition-all hover-lift">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-users text-green-700"></i>
+                            <span class="text-gray-700 text-sm font-medium">About Developer</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -301,6 +307,8 @@
         const newChatBtn = document.getElementById('newChatBtn');
         const speakBtn = document.getElementById('speakBtn');
         const chatHistoryBtn = document.getElementById('chatHistoryBtn');
+        const aboutDevBtn = document.querySelector(".fa-users")?.parentElement.parentElement;
+        
 
         let isMenuOpen = false;
         let messages = [];
@@ -491,26 +499,70 @@
                         sendBtn.innerHTML = `<i class="fas fa-paper-plane"></i>`; // tombol kirim
                 }
         }
-        function typeWriterEffect(element, html, speed) {
-                let i = 0;
+        function typeWriterEffect(element, html, speed, callback) {
+                // Buat parser sementara untuk HTML
                 const tempDiv = document.createElement("div");
                 tempDiv.innerHTML = html;
-                const fullText = tempDiv.innerText; 
-                element.innerHTML = "";
-                function type() {
-                        if (i < fullText.length) {
-                                element.innerHTML += fullText.charAt(i);
-                                i++;
-                                setTimeout(type, speed);
+                const nodes = Array.from(tempDiv.childNodes);
+
+                let i = 0;
+
+                // Fungsi rekursif untuk mengetik
+                function typeNode(node, parent) {
+                        if (!node) return;
+
+                        if (node.nodeType === Node.TEXT_NODE) {
+                                const text = node.textContent;
+                                let j = 0;
+
+                                function typeChar() {
+                                        if (j < text.length) {
+                                                parent.appendChild(document.createTextNode(text[j]));
+                                                j++;
+                                                setTimeout(typeChar, speed);
+                                        } else {
+                                                nextNode();
+                                        }
+                                }
+
+                                typeChar();
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                                const el = document.createElement(node.tagName);
+                                // Copy atribut (class, style, dll)
+                                for (let attr of node.attributes) {
+                                        el.setAttribute(attr.name, attr.value);
+                                }
+                                parent.appendChild(el);
+
+                                let childNodes = Array.from(node.childNodes);
+                                function nextChild(index = 0) {
+                                        if (index < childNodes.length) {
+                                                typeNode(childNodes[index], el, () => nextChild(index + 1));
+                                        } else {
+                                                nextNode();
+                                        }
+                                }
+                                nextChild();
                         } else {
-                                element.innerHTML = html;
-                                if (window.MathJax) {
-                                    MathJax.typesetPromise([element]);
+                                nextNode();
+                        }
+
+                        function nextNode() {
+                                i++;
+                                if (i < nodes.length) {
+                                        typeNode(nodes[i], parent);
+                                } else {
+                                        // selesai semua
+                                        if (callback) callback();
                                 }
                         }
                 }
-                type();
+
+                element.innerHTML = ""; // mulai kosong
+                typeNode(nodes[i], element);
         }
+
+
         function showTypingIndicator() {
             const typingDiv = document.createElement("div");
             typingDiv.id = "typingIndicator";
@@ -601,7 +653,11 @@
                 window.location.href = '/chatHistory';
             });
         }
-
+        if (aboutDevBtn) {
+            aboutDevBtn.addEventListener('click', () => {
+                window.location.href = '/developer'
+            });
+        }
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97dfcc486169cec3',t:'MTc1NzY4NDIzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
