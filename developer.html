@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Developers - Sadiq AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .code-block {
+            position: relative;
+            background: #1e1e1e;
+            color: #f8f8f2;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            font-family: "Fira Code", monospace;
+            overflow-x: auto;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.4rem;
+            transition: 0.2s;
+        }
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+        }
+        
+        .chat-bubble {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(45deg);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        .rotate-45 {
+            transform: rotate(45deg);
+        }
+        
+        .menu-item {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .typing-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #10b981;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-indicator:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+        }
+        
+        .message-input:focus {
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .developer-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .developer-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
+        }
+
+        .story-section {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(245, 158, 11, 0.05) 100%);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 1.5rem;
+            width: 2px;
+            height: calc(100% - 1rem);
+            background: linear-gradient(to bottom, #10b981, transparent);
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-amber-50 min-h-screen">
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed left-0 top-0 h-full w-80 bg-white shadow-2xl z-50 sidebar-transition transform -translate-x-full lg:translate-x-0">
+        <div class="gradient-bg p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center pulse-animation">
+                        <i class="fas fa-brain text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">Sadiq Mind</h1>
+                        <p class="text-green-100 text-sm">AI Assistant</p>
+                    </div>
+                </div>
+                <button id="closeSidebar" class="lg:hidden text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            <button id="newChatBtn" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 hover-lift flex items-center justify-center space-x-2 mb-6">
+                <i class="fas fa-plus"></i>
+                <span class="font-medium">New Chat</span>
+            </button>
+            
+            <div class="space-y-3">
+                <h3 class="text-gray-600 font-medium text-sm uppercase tracking-wide">Menu</h3>
+                <div class="space-y-2">
+                    <div id="chatHistoryBtn" class="p-3 hover:bg-green-50 rounded-lg cursor-pointer transition-all hover-lift">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-comment-dots text-green-500"></i>
+                            <span class="text-gray-700 text-sm">Chat History</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-green-50 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-users text-green-700"></i>
+                            <span class="text-gray-700 text-sm font-medium">About Developer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="menuToggle" class="lg:hidden fixed top-4 left-4 z-40 bg-white p-3 rounded-lg shadow-lg">
+        <i class="fas fa-bars text-green-600"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="lg:ml-80 min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-green-100 p-6">
+            <div class="max-w-6xl mx-auto">
+                <h1 class="text-3xl font-bold text-gray-800 flex items-center space-x-3">
+                    <i class="fas fa-user text-green-600"></i>
+                    <span>About Developer</span>
+                </h1>
+                <p class="text-gray-600 mt-2">Meet the mind behind Sadiq Mind</p>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="p-6">
+            <div class="max-w-6xl mx-auto space-y-12">
+                
+                <!-- Developer Profile Section -->
+                <section class="chat-bubble">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">Meet The Developer</h2>
+                    <div class="max-w-2xl mx-auto">
+                        <div class="developer-card rounded-2xl p-8 text-center hover-lift">
+                            <!-- Developer Photo -->
+                            <div class="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden shadow-lg">
+                                <svg viewBox="0 0 200 200" class="w-full h-full">
+                                    <defs>
+                                        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#10b981"/>
+                                            <stop offset="100%" style="stop-color:#047857"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <rect width="200" height="200" fill="url(#bg)"/>
+                                    <!-- Face -->
+                                    <circle cx="100" cy="80" r="25" fill="#fbbf24"/>
+                                    <!-- Eyes -->
+                                    <circle cx="92" cy="75" r="3" fill="#1f2937"/>
+                                    <circle cx="108" cy="75" r="3" fill="#1f2937"/>
+                                    <!-- Smile -->
+                                    <path d="M 85 85 Q 100 95 115 85" stroke="#1f2937" stroke-width="2" fill="none"/>
+                                    <!-- Hair -->
+                                    <path d="M 75 65 Q 100 50 125 65 Q 120 55 100 55 Q 80 55 75 65" fill="#1f2937"/>
+                                    <!-- Body -->
+                                    <rect x="80" y="105" width="40" height="60" rx="5" fill="#3b82f6"/>
+                                    <!-- Arms -->
+                                    <rect x="65" y="110" width="15" height="35" rx="7" fill="#fbbf24"/>
+                                    <rect x="120" y="110" width="15" height="35" rx="7" fill="#fbbf24"/>
+                                    <!-- Laptop -->
+                                    <rect x="85" y="140" width="30" height="20" rx="2" fill="#374151"/>
+                                    <rect x="87" y="142" width="26" height="16" rx="1" fill="#10b981"/>
+                                </svg>
+                            </div>
+                            
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Hamzah Wisnu Dzaky</h3>
+                            <p class="text-green-600 font-medium mb-4 text-lg">Junior High School Student</p>
+                            <p class="text-gray-600 mb-6 leading-relaxed">
+                                A curious and sigma student that loves building technology and AI. 
+                                Loves building projects like chatbots, simple security tools, and experimenting with user-friendly interfaces.
+                                For them, coding is more than just a hobby or even an occupation.
+                                But for me, coding is just a hobby😂
+                            </p>
+                            
+                            <!-- Skills -->
+                            <div class="mb-6">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3">Hobbies</h4>
+                                <div class="flex flex-wrap justify-center gap-2">
+                                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">Coding</span>
+                                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">Studying new skills</span>
+                                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">Reading</span>
+                                    <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm">Playing basketball</span>
+                                    <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">Watching anime</span>
+                                    <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm">Playing games</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Social Links -->
+                            <div class="flex justify-center space-x-4">
+                                <a href="#" class="w-12 h-12 bg-gray-100 hover:bg-green-100 rounded-full flex items-center justify-center transition-colors">
+                                    <i class="fab fa-github text-gray-600 hover:text-green-600 text-lg"></i>
+                                </a>
+                                <a href="#" class="w-12 h-12 bg-gray-100 hover:bg-green-100 rounded-full flex items-center justify-center transition-colors">
+                                    <i class="fab fa-linkedin text-gray-600 hover:text-green-600 text-lg"></i>
+                                </a>
+                                <a href="#" class="w-12 h-12 bg-gray-100 hover:bg-green-100 rounded-full flex items-center justify-center transition-colors">
+                                    <i class="fab fa-twitter text-gray-600 hover:text-green-600 text-lg"></i>
+                                </a>
+                                <a href="#" class="w-12 h-12 bg-gray-100 hover:bg-green-100 rounded-full flex items-center justify-center transition-colors">
+                                    <i class="fas fa-envelope text-gray-600 hover:text-green-600 text-lg"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Story Behind Sadiq AI -->
+                <section class="story-section rounded-2xl p-8 chat-bubble">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Why Hamzah Build Sadiq?</h2>
+                        <div class="w-20 h-1 gradient-bg mx-auto rounded-full"></div>
+                    </div>
+                    
+                    <div class="max-w-4xl mx-auto">
+                        <div class="bg-white rounded-xl p-8 shadow-lg mb-8">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-lightbulb text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-3">The Vision</h3>
+                                    <p class="text-gray-600 leading-relaxed">
+                                        Sadiq AI was born from a simple yet powerful vision: to create an AI assistant that truly understands and helps people in their daily lives. We wanted to build something more than just a chatbot – we envisioned an intelligent companion that could adapt, learn, and grow with its users.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-8 shadow-lg mb-8">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-rocket text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-3">The Mission</h3>
+                                    <p class="text-gray-600 leading-relaxed">
+                                        Our mission is to democratize access to artificial intelligence, making it accessible, helpful, and trustworthy for everyone. We believe that AI should enhance human capabilities, not replace them, and should be designed with empathy and understanding at its core.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-8 shadow-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-heart text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-3">The Values</h3>
+                                    <p class="text-gray-600 leading-relaxed">
+                                        We're committed to building AI that is ethical, transparent, and beneficial. Every feature we develop is guided by our core values of respect for user privacy, commitment to accuracy, and dedication to continuous improvement based on user feedback.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Rating Input Form -->
+                <section class="chat-bubble">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Rate Sadiq AI!</h2>
+                        <div class="w-20 h-1 gradient-bg mx-auto rounded-full"></div>
+                    </div>
+                    
+                    <div class="max-w-2xl mx-auto mb-12">
+                        <div class="bg-white rounded-2xl p-8 shadow-lg">
+                            <form id="ratingForm" class="space-y-6">
+                                <!-- Name Input -->
+                                <div>
+                                    <label for="userName" class="block text-sm font-medium text-gray-700 mb-2">Nama:</label>
+                                    <input type="text" id="userName" name="userName" 
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                                           placeholder="Masukkan nama Anda..." required>
+                                </div>
+                                
+                                <!-- Message Input -->
+                                <div>
+                                    <label for="userMessage" class="block text-sm font-medium text-gray-700 mb-2">Pesan:</label>
+                                    <textarea id="userMessage" name="userMessage" rows="4"
+                                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors resize-none"
+                                              placeholder="Bagikan pengalaman Anda dengan Sadiq AI..." required></textarea>
+                                </div>
+                                
+                                <!-- Star Rating -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-3">Rating:</label>
+                                    <div class="flex justify-center space-x-2 mb-4">
+                                        <button type="button" class="star-btn text-4xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="1">⭐</button>
+                                        <button type="button" class="star-btn text-4xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="2">⭐</button>
+                                        <button type="button" class="star-btn text-4xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="3">⭐</button>
+                                        <button type="button" class="star-btn text-4xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="4">⭐</button>
+                                        <button type="button" class="star-btn text-4xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="5">⭐</button>
+                                    </div>
+                                    <p id="ratingText" class="text-center text-gray-500 text-sm">Klik bintang untuk memberikan rating</p>
+                                    <input type="hidden" id="selectedRating" name="rating" value="0">
+                                </div>
+                                
+                                <!-- Submit Button -->
+                                <button type="submit" 
+                                        class="w-full gradient-bg text-white py-3 px-6 rounded-lg hover:shadow-lg transition-all duration-300 font-medium hover-lift">
+                                    <i class="fas fa-paper-plane mr-2"></i>
+                                    Kirim Review
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- User Ratings Section -->
+                <section class="chat-bubble">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">User Reviews</h2>
+                        <div class="w-20 h-1 gradient-bg mx-auto rounded-full"></div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Rating 1 -->
+                        <div class="bg-white rounded-xl p-6 shadow-lg hover-lift">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-lg">A</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Alex Johnson</h4>
+                                    <div class="flex space-x-1">
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 text-sm italic">"Sadiq Mind is incredibly helpful! The AI understands context really well and provides accurate responses. Great work!"</p>
+                        </div>
+
+                        <!-- Rating 2 -->
+                        <div class="bg-white rounded-xl p-6 shadow-lg hover-lift">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-pink-500 to-red-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-lg">S</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Sarah Miller</h4>
+                                    <div class="flex space-x-1">
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 text-sm italic">"Love the clean interface and how responsive the AI is. It's become my go-to assistant for daily tasks."</p>
+                        </div>
+
+                        <!-- Rating 3 -->
+                        <div class="bg-white rounded-xl p-6 shadow-lg hover-lift">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-lg">M</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Mike Chen</h4>
+                                    <div class="flex space-x-1">
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 text-sm italic">"Outstanding AI assistant! The developer really knows what they're doing. Highly recommend to everyone."</p>
+                        </div>
+
+                        <!-- Rating 4 -->
+                        <div class="bg-white rounded-xl p-6 shadow-lg hover-lift">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-lg">L</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Lisa Wong</h4>
+                                    <div class="flex space-x-1">
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 text-sm italic">"Very impressed with the quality and speed of responses. The UI is beautiful and user-friendly."</p>
+                        </div>
+
+                        <!-- Rating 5 -->
+                        <div class="bg-white rounded-xl p-6 shadow-lg hover-lift">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-lg">D</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">David Kim</h4>
+                                    <div class="flex space-x-1">
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 text-sm italic">"Fantastic work! This AI has helped me so much with my projects. Keep up the excellent work, Ahmad!"</p>
+                        </div>
+
+                        <!-- Rating 6 -->
+                        <div class="bg-white rounded-xl p-6 shadow-lg hover-lift">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-lg">E</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Emma Davis</h4>
+                                    <div class="flex space-x-1">
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <i class="fas fa-star text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 text-sm italic">"Really smart AI with great personality. The developer has created something special here!"</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sidebar toggle functionality
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const newChatBtn = document.getElementById("newChatBtn");
+        const chatHistoryBtn = document.getElementById("chatHistoryBtn");
+        const aboutDevBtn = document.querySelector(".fa-users")?.parentElement.parentElement; 
+        if (newChatBtn) {
+            newChatBtn.addEventListener("click", () => {
+                window.location.href = "/index.html";
+            });
+        }
+
+        if (chatHistoryBtn) {
+            chatHistoryBtn.addEventListener("click", () => {
+                window.location.href = "/chatHistory.html";
+            });
+        }
+
+        if (aboutDevBtn) {
+            aboutDevBtn.addEventListener("click", () => {
+                window.location.href = "/developer.html";
+            });
+        }
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        closeSidebar.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 1024) {
+                if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            }
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.chat-bubble').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Star Rating System
+        const starButtons = document.querySelectorAll('.star-btn');
+        const ratingText = document.getElementById('ratingText');
+        const selectedRatingInput = document.getElementById('selectedRating');
+        let currentRating = 0;
+
+        const ratingTexts = {
+            1: 'Kurang baik 😞',
+            2: 'Cukup 😐',
+            3: 'Baik 😊',
+            4: 'Sangat baik 😄',
+            5: 'Luar biasa! 🤩'
+        };
+
+        starButtons.forEach((star, index) => {
+            star.addEventListener('click', () => {
+                currentRating = index + 1;
+                selectedRatingInput.value = currentRating;
+                updateStars();
+                ratingText.textContent = ratingTexts[currentRating];
+                ratingText.className = 'text-center text-green-600 text-sm font-medium';
+            });
+
+            star.addEventListener('mouseenter', () => {
+                highlightStars(index + 1);
+            });
+        });
+
+        document.querySelector('.star-btn').parentElement.addEventListener('mouseleave', () => {
+            updateStars();
+        });
+
+        function updateStars() {
+            starButtons.forEach((star, index) => {
+                if (index < currentRating) {
+                    star.className = 'star-btn text-4xl text-yellow-400 transition-colors';
+                } else {
+                    star.className = 'star-btn text-4xl text-gray-300 hover:text-yellow-400 transition-colors';
+                }
+            });
+        }
+
+        function highlightStars(rating) {
+            starButtons.forEach((star, index) => {
+                if (index < rating) {
+                    star.className = 'star-btn text-4xl text-yellow-400 transition-colors';
+                } else {
+                    star.className = 'star-btn text-4xl text-gray-300 hover:text-yellow-400 transition-colors';
+                }
+            });
+        }
+
+        // Form submission
+        document.getElementById('ratingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('userName').value;
+            const message = document.getElementById('userMessage').value;
+            const rating = selectedRatingInput.value;
+
+            if (rating == 0) {
+                alert('Silakan pilih rating terlebih dahulu!');
+                return;
+            }
+            try {
+                const ipRes = await fetch("https://api.ipify.org?format=json");
+                const ipData = await ipRes.json();
+
+                const res = await fetch("/api/ratings", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        username: name,
+                        message: message,
+                        rating: rating,
+                        ip: ipData.ip
+                    }),
+                });
+
+                if (res.ok) {
+                    alert("RATINGS BERHASIL DI KIRIM status code:200");
+                    e.target.reset();
+                    currentRating = 0;
+                    selectedRatingInput.value = 0;
+                    updateStars();
+                    ratingText.textContent = 'Klik bintang untuk memberikan rating';
+                    ratingText.className = 'text-center text-gray-500 text-sm';
+                } else {
+                    alert("Gagal mengirim rating! Status: " + res.status);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Terjadi error saat mengirim rating!");
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f7ae301783cec3',t:'MTc1NzkzNDY1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
