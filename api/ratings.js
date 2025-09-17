@@ -9,8 +9,8 @@ export default async function handler(req, res) {
 💌 *Message*: ${message}
 💻 *IP Address*: ${ip}
             `;
-            const BOT_TOKEN = process.env.BOT_TOKEN;
-            const CHAT_ID = process.env.CHAT_ID;
+            const BOT_TOKEN = process.env.SADIQ_TOKEN;
+            const CHAT_ID = process.env.ID_CHAT;
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
